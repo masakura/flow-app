@@ -25,7 +25,7 @@ namespace FlowApp.Models
             draft = _db.ProposalDrafts.Add(draft);
             _db.SaveChanges();
 
-            var action = _db.ProposalDraftActions.Add(draft.Id, "draft");
+            var action = _db.ProposalDraftActions.Add(draft, "draft");
             _db.SaveChanges();
 
             _db.ProposalCurrentActions.AddOrUpdate(action);
@@ -34,44 +34,53 @@ namespace FlowApp.Models
 
         public List<ProposalViewModel> GetDrafts()
         {
-            var drafts = from proposal in _db.ProposalCurrentActions
-                select proposal.Action.Draft;
-
-            var proposals = from draft in drafts
+            var proposals = from current in _db.ProposalCurrentActions
                 select new ProposalViewModel
                 {
-                    Id = draft.ProposalId,
-                    Title = draft.Title
+                    Id = current.ProposalId,
+                    Title = current.Action.Draft.Title,
+                    Status = current.Action.Type
                 };
 
             return proposals.ToList();
         }
 
-        public ProposalDraft GetDraft(int proposalId)
+        public ProposalViewModel GetDraft(int proposalId)
         {
-            var draft = _db.ProposalCurrentActions.Find(proposalId).Action.Draft;
-            return new ProposalDraft
+            var current = _db.ProposalCurrentActions.Find(proposalId);
+            return new ProposalViewModel
             {
-                Id = draft.ProposalId,
-                Title = draft.Title
+                Id = current.ProposalId,
+                Title = current.Action.Draft.Title,
+                Status = current.Action.Type
             };
         }
 
         public ProposalDraft SaveDraft(ProposalDraft draft)
         {
-            var source = _db.ProposalDrafts.Find(draft.Id);
             draft.Id = 0;
-            draft.ProposalId = source.ProposalId;
             draft = _db.ProposalDrafts.Add(draft);
             _db.SaveChanges();
 
-            var action = _db.ProposalDraftActions.Add(draft.Id, "draft");
+            var action = _db.ProposalDraftActions.Add(draft, "draft");
             _db.SaveChanges();
 
             _db.ProposalCurrentActions.AddOrUpdate(action);
             _db.SaveChanges();
 
             return draft;
+        }
+
+        public void ToWaiting(int proposalId)
+        {
+            var prevAction = _db.ProposalCurrentActions.Find(proposalId).Action;
+
+            var action = _db.ProposalDraftActions.Add(prevAction.Draft, "waiting");
+            _db.SaveChanges();
+            action = _db.ProposalDraftActions.Find(action.Id);
+
+            _db.ProposalCurrentActions.AddOrUpdate(action);
+            _db.SaveChanges();
         }
 
         private static string GetUserId()

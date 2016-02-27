@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using System.Net;
+﻿using System.Net;
 using System.Web.Mvc;
 using FlowApp.Models;
 
@@ -77,11 +76,22 @@ namespace FlowApp.Controllers
         // 詳細については、http://go.microsoft.com/fwlink/?LinkId=317598 を参照してください。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title")] ProposalDraft draft)
+        public ActionResult Edit([Bind(Include = "Id,Title,Action")] ProposalViewModel draft)
         {
             if (ModelState.IsValid)
             {
-                _proposalService.SaveDraft(draft);
+                if (draft.Action == "Save")
+                {
+                    _proposalService.SaveDraft(new ProposalDraft
+                    {
+                        ProposalId = draft.Id,
+                        Title = draft.Title
+                    });
+                }
+                else if (draft.Action == "Request")
+                {
+                    _proposalService.ToWaiting(draft.Id);
+                }
 
                 return RedirectToAction("Index");
             }

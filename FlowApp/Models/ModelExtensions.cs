@@ -4,11 +4,12 @@ namespace FlowApp.Models
 {
     public static class ModelExtensions
     {
-        public static ProposalDraftAction Add(this IDbSet<ProposalDraftAction> actions, int draftId, string type)
+        public static ProposalDraftAction Add(this IDbSet<ProposalDraftAction> actions, ProposalDraft draft, string type)
         {
             return actions.Add(new ProposalDraftAction
             {
-                DraftId = draftId,
+                DraftId = draft.Id,
+                Draft = draft,
                 Type = type
             });
         }
