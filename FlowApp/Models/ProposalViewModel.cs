@@ -2,7 +2,7 @@
 {
     public class ProposalViewModel
     {
-        public Proposal Proposal { get; set; }
-        public ProposalDraft Draft { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
     }
 }

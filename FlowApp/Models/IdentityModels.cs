@@ -25,6 +25,7 @@ namespace FlowApp.Models
         public DbSet<Proposal> Proposals { get; set; }
         public DbSet<ProposalDraft> ProposalDrafts { get; set; }
         public DbSet<ProposalDraftAction> ProposalDraftActions { get; set; }
+        public DbSet<ProposalCurrentAction> ProposalCurrentActions { get; set; }
 
         public static ApplicationDbContext Create()
         {
