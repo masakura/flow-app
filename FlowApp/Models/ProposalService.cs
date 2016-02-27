@@ -25,9 +25,26 @@ namespace FlowApp.Models
             _db.SaveChanges();
         }
 
-        public IList<ProposalDraft> GetAll()
+        public IList<ProposalDraft> GetDrafts()
         {
             return _db.ProposalDrafts.ToList();
+        }
+
+        public ProposalDraft GetDraft(int id)
+        {
+            return _db.ProposalDrafts.Find(id);
+        }
+
+        public ProposalDraft SaveDraft(ProposalDraft draft)
+        {
+            var source = _db.ProposalDrafts.Find(draft.Id);
+            draft.Id = 0;
+            draft.ProposalId = source.ProposalId;
+            draft = _db.ProposalDrafts.Add(draft);
+
+            _db.SaveChanges();
+
+            return draft;
         }
 
         private static string GetUserId()

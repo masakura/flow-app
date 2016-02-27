@@ -13,7 +13,7 @@ namespace FlowApp.Controllers
         // GET: Proposals
         public ActionResult Index()
         {
-            return View(_proposalService.GetAll());
+            return View(_proposalService.GetDrafts());
         }
 
         // GET: Proposals/Details/5
@@ -61,12 +61,15 @@ namespace FlowApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Proposal proposal = _db.Proposals.Find(id);
-            if (proposal == null)
+
+            var draft = _proposalService.GetDraft(id.Value);
+
+            if (draft == null)
             {
                 return HttpNotFound();
             }
-            return View(proposal);
+
+            return View(draft);
         }
 
         // POST: Proposals/Edit/5
@@ -74,15 +77,15 @@ namespace FlowApp.Controllers
         // 詳細については、http://go.microsoft.com/fwlink/?LinkId=317598 を参照してください。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,UserId")] Proposal proposal)
+        public ActionResult Edit([Bind(Include = "Id,Title")] ProposalDraft draft)
         {
             if (ModelState.IsValid)
             {
-                _db.Entry(proposal).State = EntityState.Modified;
-                _db.SaveChanges();
+                _proposalService.SaveDraft(draft);
+
                 return RedirectToAction("Index");
             }
-            return View(proposal);
+            return View(draft);
         }
 
         // GET: Proposals/Delete/5
