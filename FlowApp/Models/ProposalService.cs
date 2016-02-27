@@ -8,6 +8,7 @@ namespace FlowApp.Models
     public class ProposalService
     {
         private readonly ApplicationDbContext _db = new ApplicationDbContext();
+        private readonly ArticleService _articleService = new ArticleService();
 
         public void Create(ProposalDraft draft)
         {
@@ -84,6 +85,8 @@ namespace FlowApp.Models
         public void ToShown(int proposalId)
         {
             ChangeStatus(proposalId, "shown");
+
+            _articleService.Show(proposalId);
         }
 
         private void ChangeStatus(int proposalId, string status)

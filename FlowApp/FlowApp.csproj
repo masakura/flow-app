@@ -186,6 +186,8 @@
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Article.cs" />
+    <Compile Include="Models\ArticleService.cs" />
+    <Compile Include="Models\ProposalArticle.cs" />
     <Compile Include="Models\ProposalCurrentAction.cs" />
     <Compile Include="Models\DbInitializer.cs" />
     <Compile Include="Models\ModelExtensions.cs" />
