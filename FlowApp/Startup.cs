@@ -1,7 +1,9 @@
-﻿using Microsoft.Owin;
+﻿using FlowApp;
+using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(FlowApp.Startup))]
+[assembly: OwinStartup(typeof (Startup))]
+
 namespace FlowApp
 {
     public partial class Startup

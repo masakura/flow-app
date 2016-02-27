@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace FlowApp.Models
 {
@@ -18,7 +19,7 @@ namespace FlowApp.Models
     public class SendCodeViewModel
     {
         public string SelectedProvider { get; set; }
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
+        public ICollection<SelectListItem> Providers { get; set; }
         public string ReturnUrl { get; set; }
         public bool RememberMe { get; set; }
     }
@@ -31,6 +32,7 @@ namespace FlowApp.Models
         [Required]
         [Display(Name = "コード")]
         public string Code { get; set; }
+
         public string ReturnUrl { get; set; }
 
         [Display(Name = "認証情報をこのブラウザーに保存しますか?")]
@@ -77,7 +79,7 @@ namespace FlowApp.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "パスワードの確認入力")]
-        [Compare("Password", ErrorMessage = "パスワードと確認のパスワードが一致しません。")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "パスワードと確認のパスワードが一致しません。")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -96,7 +98,7 @@ namespace FlowApp.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "パスワードの確認入力")]
-        [Compare("Password", ErrorMessage = "パスワードと確認のパスワードが一致しません。")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "パスワードと確認のパスワードが一致しません。")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }

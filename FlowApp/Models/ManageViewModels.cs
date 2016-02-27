@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
@@ -35,7 +36,7 @@ namespace FlowApp.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "新しいパスワードの確認入力")]
-        [Compare("NewPassword", ErrorMessage = "新しいパスワードと確認のパスワードが一致しません。")]
+        [System.ComponentModel.DataAnnotations.Compare("NewPassword", ErrorMessage = "新しいパスワードと確認のパスワードが一致しません。")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -54,7 +55,7 @@ namespace FlowApp.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "新しいパスワードの確認入力")]
-        [Compare("NewPassword", ErrorMessage = "新しいパスワードと確認のパスワードが一致しません。")]
+        [System.ComponentModel.DataAnnotations.Compare("NewPassword", ErrorMessage = "新しいパスワードと確認のパスワードが一致しません。")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -81,6 +82,6 @@ namespace FlowApp.Models
     public class ConfigureTwoFactorViewModel
     {
         public string SelectedProvider { get; set; }
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
+        public ICollection<SelectListItem> Providers { get; set; }
     }
 }
