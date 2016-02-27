@@ -73,9 +73,24 @@ namespace FlowApp.Models
 
         public void ToWaiting(int proposalId)
         {
+            ChangeStatus(proposalId, "waiting");
+        }
+
+        public void ToDraft(int proposalId)
+        {
+            ChangeStatus(proposalId, "draft");
+        }
+
+        public void ToShown(int proposalId)
+        {
+            ChangeStatus(proposalId, "shown");
+        }
+
+        private void ChangeStatus(int proposalId, string status)
+        {
             var prevAction = _db.ProposalCurrentActions.Find(proposalId).Action;
 
-            var action = _db.ProposalDraftActions.Add(prevAction.Draft, "waiting");
+            var action = _db.ProposalDraftActions.Add(prevAction.Draft, status);
             _db.SaveChanges();
             action = _db.ProposalDraftActions.Find(action.Id);
 

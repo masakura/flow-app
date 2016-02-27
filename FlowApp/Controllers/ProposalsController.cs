@@ -80,17 +80,27 @@ namespace FlowApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (draft.Action == "Save")
+                switch (draft.Action)
                 {
-                    _proposalService.SaveDraft(new ProposalDraft
-                    {
-                        ProposalId = draft.Id,
-                        Title = draft.Title
-                    });
-                }
-                else if (draft.Action == "Request")
-                {
-                    _proposalService.ToWaiting(draft.Id);
+                    case "Save":
+                        _proposalService.SaveDraft(new ProposalDraft
+                        {
+                            ProposalId = draft.Id,
+                            Title = draft.Title
+                        });
+                        break;
+
+                    case "Request":
+                        _proposalService.ToWaiting(draft.Id);
+                        break;
+
+                    case "Reject":
+                        _proposalService.ToDraft(draft.Id);
+                        break;
+
+                    case "Approval":
+                        _proposalService.ToShown(draft.Id); 
+                        break;
                 }
 
                 return RedirectToAction("Index");
