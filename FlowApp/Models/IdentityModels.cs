@@ -22,6 +22,9 @@ namespace FlowApp.Models
     {
         public DbSet<Article> Articles { get; set; }
 
+        public DbSet<Proposal> Proposals { get; set; }
+        public DbSet<ProposalDraft> ProposalDrafts { get; set; }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
