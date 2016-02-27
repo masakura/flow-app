@@ -20,7 +20,16 @@ namespace FlowApp.Models
             _db.Proposals.Add(proposal);
 
             draft.UserId = userId;
-            _db.ProposalDrafts.Add(draft);
+            draft = _db.ProposalDrafts.Add(draft);
+
+            _db.SaveChanges();
+
+            var action = new ProposalDraftAction()
+            {
+                DraftId = draft.Id,
+                Type = "draft"
+            };
+            _db.ProposalDraftActions.Add(action);
 
             _db.SaveChanges();
         }
@@ -41,6 +50,13 @@ namespace FlowApp.Models
             draft.Id = 0;
             draft.ProposalId = source.ProposalId;
             draft = _db.ProposalDrafts.Add(draft);
+
+            var action = new ProposalDraftAction
+            {
+                DraftId = draft.Id,
+                Type = "draft"
+            };
+            _db.ProposalDraftActions.Add(action);
 
             _db.SaveChanges();
 

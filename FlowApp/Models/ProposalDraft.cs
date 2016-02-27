@@ -6,7 +6,7 @@
         public string Title { get; set; }
         public int ProposalId { get; set; }
         public string UserId { get; set; }
-        public Proposal Proposal { get; set; }
-        public ApplicationUser User { get; set; }
+        public virtual Proposal Proposal { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

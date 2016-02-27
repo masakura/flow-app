@@ -18,14 +18,6 @@ namespace FlowApp
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             Database.SetInitializer(new DbInitializer());
-
-            using (var db = new ApplicationDbContext())
-            {
-                foreach (var user in db.Users)
-                {
-                    Debug.WriteLine(user);
-                }
-            }
         }
     }
 }
