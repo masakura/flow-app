@@ -35,40 +35,32 @@ namespace FlowApp.Models
 
         public List<ProposalViewModel> GetAll()
         {
-            var proposals = from current in _db.ProposalCurrentActions
-                select current;
-
-            return ProposalViewModel.Create(proposals).ToList();
+            return _db.ProposalCurrentActions.ToProposalViewModels().ToList();
         }
 
         public List<ProposalViewModel> GetDrafts()
         {
-            var userId = GetUserId();
-
-            var proposals = from current in _db.ProposalCurrentActions
-                where current.Proposal.UserId == userId || current.Action.Draft.UserId == userId
-                where current.Action.Type == "draft"
-                select current;
-
-            return ProposalViewModel.Create(proposals).ToList();
+            return _db.ProposalCurrentActions
+                .Mine()
+                .Type("draft")
+                .ToProposalViewModels()
+                .ToList();
         }
 
         public List<ProposalViewModel> GetWaitings()
         {
-            var proposals = from current in _db.ProposalCurrentActions
-                where current.Action.Type == "waiting"
-                select current;
-
-            return ProposalViewModel.Create(proposals).ToList();
+            return _db.ProposalCurrentActions
+                .Type("waiting")
+                .ToProposalViewModels()
+                .ToList();
         }
 
         public List<ProposalViewModel> GetShowns()
         {
-            var proposals = from current in _db.ProposalCurrentActions
-                where current.Action.Type == "shown"
-                select current;
-
-            return ProposalViewModel.Create(proposals).ToList();
+            return _db.ProposalCurrentActions
+                .Type("shown")
+                .ToProposalViewModels()
+                .ToList();
         }
 
         public ProposalViewModel GetProposal(int proposalId)
