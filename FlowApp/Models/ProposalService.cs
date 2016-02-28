@@ -36,14 +36,9 @@ namespace FlowApp.Models
         public List<ProposalViewModel> GetAll()
         {
             var proposals = from current in _db.ProposalCurrentActions
-                select new ProposalViewModel
-                {
-                    Id = current.ProposalId,
-                    Title = current.Action.Draft.Title,
-                    Status = current.Action.Type
-                };
+                select current;
 
-            return proposals.ToList();
+            return ProposalViewModel.Create(proposals).ToList();
         }
 
         public List<ProposalViewModel> GetDrafts()
@@ -52,24 +47,28 @@ namespace FlowApp.Models
 
             var proposals = from current in _db.ProposalCurrentActions
                 where current.Proposal.UserId == userId || current.Action.Draft.UserId == userId
-                select new ProposalViewModel
-                {
-                    Id = current.ProposalId,
-                    Title = current.Action.Draft.Title,
-                    Status = current.Action.Type,
-                    ProposalUser = new UserViewModel
-                    {
-                        Id = current.Proposal.UserId,
-                        UserName = current.Proposal.User.UserName
-                    },
-                    DraftUser = new UserViewModel
-                    {
-                        Id = current.Action.Draft.UserId,
-                        UserName = current.Action.Draft.User.UserName
-                    }
-                };
+                where current.Action.Type == "draft"
+                select current;
 
-            return proposals.ToList();
+            return ProposalViewModel.Create(proposals).ToList();
+        }
+
+        public List<ProposalViewModel> GetWaitings()
+        {
+            var proposals = from current in _db.ProposalCurrentActions
+                where current.Action.Type == "waiting"
+                select current;
+
+            return ProposalViewModel.Create(proposals).ToList();
+        }
+
+        public List<ProposalViewModel> GetShowns()
+        {
+            var proposals = from current in _db.ProposalCurrentActions
+                where current.Action.Type == "shown"
+                select current;
+
+            return ProposalViewModel.Create(proposals).ToList();
         }
 
         public ProposalViewModel GetProposal(int proposalId)

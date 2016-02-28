@@ -20,6 +20,16 @@ namespace FlowApp.Controllers
             return View(_proposalService.GetDrafts());
         }
 
+        public ActionResult Waitings()
+        {
+            return View(_proposalService.GetWaitings());
+        }
+
+        public ActionResult Showns()
+        {
+            return View(_proposalService.GetShowns());
+        }
+
         // GET: Proposals/Details/5
         public ActionResult Details(int? id)
         {

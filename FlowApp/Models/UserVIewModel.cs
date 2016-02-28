@@ -9,5 +9,16 @@
         {
             return UserName;
         }
+
+        public static UserViewModel Create(ApplicationUser user)
+        {
+            return user == null
+                ? null
+                : new UserViewModel
+                {
+                    Id = user.Id,
+                    UserName = user.UserName
+                };
+        }
     }
 }
