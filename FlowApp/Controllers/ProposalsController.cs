@@ -12,6 +12,11 @@ namespace FlowApp.Controllers
         // GET: Proposals
         public ActionResult Index()
         {
+            return View(_proposalService.GetAll());
+        }
+
+        public ActionResult Drafts()
+        {
             return View(_proposalService.GetDrafts());
         }
 
@@ -61,7 +66,7 @@ namespace FlowApp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var draft = _proposalService.GetDraft(id.Value);
+            var draft = _proposalService.GetProposal(id.Value);
 
             if (draft == null)
             {

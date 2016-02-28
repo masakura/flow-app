@@ -1,0 +1,15 @@
+﻿@model IEnumerable<FlowApp.Models.ProposalViewModel>
+
+<h2>Index</h2>
+
+<p>
+    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+        @Html.ActionLink("Index", "Index", null, null, new { @class = "btn" })
+        @Html.ActionLink("Drafts", "Drafts", null, null, new { @class = "btn" })
+    </div>
+</p>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@Html.Partial("_Drafts", Model)

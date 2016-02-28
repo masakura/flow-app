@@ -10,7 +10,10 @@ namespace FlowApp.Models
         public int ProposalId { get; set; }
 
         public int ActionId { get; set; }
+
+        [ForeignKey("ProposalId")]
         public virtual Proposal Proposal { get; set; }
+
         public virtual ProposalDraftAction Action { get; set; }
     }
 }

@@ -7,8 +7,8 @@ namespace FlowApp.Models
 {
     public class ProposalService
     {
-        private readonly ApplicationDbContext _db = new ApplicationDbContext();
         private readonly ArticleService _articleService = new ArticleService();
+        private readonly ApplicationDbContext _db = new ApplicationDbContext();
 
         public void Create(ProposalDraft draft)
         {
@@ -33,7 +33,7 @@ namespace FlowApp.Models
             _db.SaveChanges();
         }
 
-        public List<ProposalViewModel> GetDrafts()
+        public List<ProposalViewModel> GetAll()
         {
             var proposals = from current in _db.ProposalCurrentActions
                 select new ProposalViewModel
@@ -46,7 +46,33 @@ namespace FlowApp.Models
             return proposals.ToList();
         }
 
-        public ProposalViewModel GetDraft(int proposalId)
+        public List<ProposalViewModel> GetDrafts()
+        {
+            var userId = GetUserId();
+
+            var proposals = from current in _db.ProposalCurrentActions
+                where current.Proposal.UserId == userId || current.Action.Draft.UserId == userId
+                select new ProposalViewModel
+                {
+                    Id = current.ProposalId,
+                    Title = current.Action.Draft.Title,
+                    Status = current.Action.Type,
+                    ProposalUser = new UserViewModel
+                    {
+                        Id = current.Proposal.UserId,
+                        UserName = current.Proposal.User.UserName
+                    },
+                    DraftUser = new UserViewModel
+                    {
+                        Id = current.Action.Draft.UserId,
+                        UserName = current.Action.Draft.User.UserName
+                    }
+                };
+
+            return proposals.ToList();
+        }
+
+        public ProposalViewModel GetProposal(int proposalId)
         {
             var current = _db.ProposalCurrentActions.Find(proposalId);
             return new ProposalViewModel
