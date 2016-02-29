@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace FlowApp.Models
@@ -9,7 +10,11 @@ namespace FlowApp.Models
         public string Title { get; set; }
         public string Status { get; set; }
         public string Action { get; set; }
+
+        [UIHint("User")]
         public UserViewModel ProposalUser { get; set; }
+
+        [UIHint("User")]
         public UserViewModel DraftUser { get; set; }
 
         public static ProposalViewModel Create(ProposalCurrentAction current)
