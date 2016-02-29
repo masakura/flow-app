@@ -1,7 +1,9 @@
 ﻿<div class="btn-group" role="group" aria-label="...">
-    @Html.ActionLink("すべて", "Index", null, null, new { @class = "btn btn-default" })
     @Html.ActionLink("下書き (自分の)", "Drafts", null, null, new { @class = "btn btn-default" })
-    @Html.ActionLink("承認箱 (すべて)", "Pendings", null, null, new { @class = "btn btn-default" })
+</div>
+<div class="btn-group" role="group" aria-label="...">
+    @Html.ActionLink("すべて", "Index", null, null, new { @class = "btn btn-default" })
+    @Html.ActionLink("未承認 (すべて)", "Pendings", null, null, new { @class = "btn btn-default" })
     @Html.ActionLink("公開中 (すべて)", "Publishes", null, null, new { @class = "btn btn-default" })
     @Html.ActionLink("公開終了 (すべて)", "Ends", null, null, new { @class = "btn btn-default" })
 </div>
