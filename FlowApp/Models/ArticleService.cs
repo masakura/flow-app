@@ -22,7 +22,8 @@ namespace FlowApp.Models
             {
                 var article = new Article
                 {
-                    Title = current.Action.Draft.Title
+                    Title = current.Action.Draft.Title,
+                    Displayed = true
                 };
                 article = _db.Articles.Add(article);
                 _db.SaveChanges();

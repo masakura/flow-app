@@ -8,5 +8,7 @@ namespace FlowApp.Models
 
         [MaxLength(128)]
         public string Title { get; set; }
+
+        public bool Displayed { get; set; }
     }
 }
