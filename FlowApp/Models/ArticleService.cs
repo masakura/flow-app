@@ -6,7 +6,7 @@ namespace FlowApp.Models
     {
         private readonly ApplicationDbContext _db = new ApplicationDbContext();
 
-        public void Show(int proposalId)
+        public void Save(int proposalId, bool displayed)
         {
             var current = _db.ProposalCurrentActions.Find(proposalId);
             var proposalArticle = _db.ProposalArticles.Find(proposalId);
@@ -15,6 +15,7 @@ namespace FlowApp.Models
             {
                 var article = _db.Articles.Find(proposalArticle.ArticleId);
                 article.Title = current.Action.Draft.Title;
+                article.Displayed = displayed;
                 _db.Entry(proposalArticle).State = EntityState.Modified;
                 _db.SaveChanges();
             }
@@ -23,7 +24,7 @@ namespace FlowApp.Models
                 var article = new Article
                 {
                     Title = current.Action.Draft.Title,
-                    Displayed = true
+                    Displayed = displayed
                 };
                 article = _db.Articles.Add(article);
                 _db.SaveChanges();

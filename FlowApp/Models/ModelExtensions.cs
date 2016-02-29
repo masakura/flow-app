@@ -34,12 +34,22 @@ namespace FlowApp.Models
             return currents.Where(current => current.Proposal.UserId == userId || current.Action.Draft.UserId == userId);
         }
 
-        public static IQueryable<ProposalCurrentAction> Type(this IQueryable<ProposalCurrentAction> currents, string type)
+        public static IQueryable<ProposalCurrentAction> Type(this IQueryable<ProposalCurrentAction> currents,
+            string type)
         {
             return currents.Where(current => current.Action.Type == type);
         }
 
-        public static IEnumerable<ProposalViewModel> ToProposalViewModels(this IEnumerable<ProposalCurrentAction> currents)
+        public static IQueryable<ProposalCurrentAction> Types(this IQueryable<ProposalCurrentAction> currents,
+            params string[] types)
+        {
+            return from current in currents
+                join type in types on current.Action.Type equals type
+                select current;
+        }
+
+        public static IEnumerable<ProposalViewModel> ToProposalViewModels(
+            this IEnumerable<ProposalCurrentAction> currents)
         {
             return ProposalViewModel.Create(currents);
         }

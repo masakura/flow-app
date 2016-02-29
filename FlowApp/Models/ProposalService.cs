@@ -47,10 +47,10 @@ namespace FlowApp.Models
                 .ToList();
         }
 
-        public List<ProposalViewModel> GetWaitings()
+        public List<ProposalViewModel> GetPendings()
         {
             return _db.ProposalCurrentActions
-                .Type("waiting")
+                .Types("request/publish", "request/end")
                 .ToProposalViewModels()
                 .ToList();
         }
@@ -89,21 +89,36 @@ namespace FlowApp.Models
             return draft;
         }
 
-        public void ToWaiting(int proposalId)
-        {
-            ChangeStatus(proposalId, "waiting");
-        }
-
         public void ToDraft(int proposalId)
         {
             ChangeStatus(proposalId, "draft");
         }
 
-        public void ToShown(int proposalId)
+        public void Approval(int proposalId)
         {
-            ChangeStatus(proposalId, "shown");
+            var current = _db.ProposalCurrentActions.Find(proposalId);
 
-            _articleService.Show(proposalId);
+            var action = current.Action;
+            switch (action.Type)
+            {
+                case "request/publish":
+                    ChangeStatus(proposalId, "publish");
+                    break;
+
+                case "request/end":
+                    ChangeStatus(proposalId, "end");
+                    break;
+            }
+        }
+
+        public void RequestPublish(int proposalId)
+        {
+            ChangeStatus(proposalId, "request/publish");
+        }
+
+        public void RequestEnd(int proposalId)
+        {
+            ChangeStatus(proposalId, "request/end");
         }
 
         private void ChangeStatus(int proposalId, string status)
@@ -116,6 +131,16 @@ namespace FlowApp.Models
 
             _db.ProposalCurrentActions.AddOrUpdate(action);
             _db.SaveChanges();
+
+            switch (status)
+            {
+                case "publish":
+                    _articleService.Save(proposalId, true);
+                    break;
+                case "end":
+                    _articleService.Save(proposalId, false);
+                    break;
+            }
         }
 
         private static string GetUserId()

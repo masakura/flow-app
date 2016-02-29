@@ -22,7 +22,7 @@ namespace FlowApp.Controllers
 
         public ActionResult Waitings()
         {
-            return View(_proposalService.GetWaitings());
+            return View(_proposalService.GetPendings());
         }
 
         public ActionResult Showns()
@@ -105,16 +105,20 @@ namespace FlowApp.Controllers
                         });
                         break;
 
-                    case "Request":
-                        _proposalService.ToWaiting(draft.Id);
-                        break;
-
                     case "Reject":
                         _proposalService.ToDraft(draft.Id);
                         break;
 
+                    case "Request/Publish":
+                        _proposalService.RequestPublish(draft.Id);
+                        break;
+
+                    case "Request/End":
+                        _proposalService.RequestEnd(draft.Id);
+                        break;
+
                     case "Approval":
-                        _proposalService.ToShown(draft.Id); 
+                        _proposalService.Approval(draft.Id);
                         break;
                 }
 
