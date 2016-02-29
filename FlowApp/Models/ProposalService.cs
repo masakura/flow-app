@@ -33,48 +33,6 @@ namespace FlowApp.Models
             _db.SaveChanges();
         }
 
-        public List<ProposalViewModel> GetAll()
-        {
-            return _db.ProposalCurrentActions.ToProposalViewModels().ToList();
-        }
-
-        public List<ProposalViewModel> GetDrafts()
-        {
-            return _db.ProposalCurrentActions
-                .Mine()
-                .Type("draft")
-                .ToProposalViewModels()
-                .ToList();
-        }
-
-        public List<ProposalViewModel> GetPendings()
-        {
-            return _db.ProposalCurrentActions
-                .Types("request/publish", "request/end")
-                .ToProposalViewModels()
-                .ToList();
-        }
-
-        public List<ProposalViewModel> GetPublishes()
-        {
-            var query = from pa in _db.ProposalArticles
-                join current in _db.ProposalCurrentActions on pa.ProposalId equals current.ProposalId
-                where pa.Article.Displayed
-                select current;
-
-            return query.ToProposalViewModels().ToList();
-        }
-
-        public List<ProposalViewModel> GetEnds()
-        {
-            var query = from pa in _db.ProposalArticles
-                        join current in _db.ProposalCurrentActions on pa.ProposalId equals current.ProposalId
-                        where !pa.Article.Displayed
-                        select current;
-
-            return query.ToProposalViewModels().ToList();
-        }
-
         public ProposalViewModel GetProposal(int proposalId)
         {
             var current = _db.ProposalCurrentActions.Find(proposalId);
@@ -84,53 +42,6 @@ namespace FlowApp.Models
                 Title = current.Action.Draft.Title,
                 Status = current.Action.Type
             };
-        }
-
-        public ProposalDraft SaveDraft(ProposalDraft draft)
-        {
-            draft.Id = 0;
-            draft = _db.ProposalDrafts.Add(draft);
-            _db.SaveChanges();
-
-            var action = _db.ProposalDraftActions.Add(draft, "draft");
-            _db.SaveChanges();
-
-            _db.ProposalCurrentActions.AddOrUpdate(action);
-            _db.SaveChanges();
-
-            return draft;
-        }
-
-        public void ToDraft(int proposalId)
-        {
-            ChangeStatus(proposalId, "draft");
-        }
-
-        public void Approval(int proposalId)
-        {
-            var current = _db.ProposalCurrentActions.Find(proposalId);
-
-            var action = current.Action;
-            switch (action.Type)
-            {
-                case "request/publish":
-                    ChangeStatus(proposalId, "publish");
-                    break;
-
-                case "request/end":
-                    ChangeStatus(proposalId, "end");
-                    break;
-            }
-        }
-
-        public void RequestPublish(int proposalId)
-        {
-            ChangeStatus(proposalId, "request/publish");
-        }
-
-        public void RequestEnd(int proposalId)
-        {
-            ChangeStatus(proposalId, "request/end");
         }
 
         private void ChangeStatus(int proposalId, string status)
@@ -159,5 +70,170 @@ namespace FlowApp.Models
         {
             return HttpContext.Current.User.Identity.GetUserId();
         }
+
+        #region 投稿者向け投稿取得
+
+        public List<ProposalViewModel> GetDrafts()
+        {
+            return _db.ProposalCurrentActions
+                .Mine()
+                .Types("draft", "cancel", "reject", "cancel/publish", "cancel/end", "reject/publish", "reject/end")
+                .ToProposalViewModels()
+                .ToList();
+        }
+
+        #endregion
+
+        #region 承認者向け投稿取得
+
+        public List<ProposalViewModel> GetAll()
+        {
+            return _db.ProposalCurrentActions.ToProposalViewModels().ToList();
+        }
+
+        public List<ProposalViewModel> GetPendings()
+        {
+            return _db.ProposalCurrentActions
+                .Types("request/publish", "request/end")
+                .ToProposalViewModels()
+                .ToList();
+        }
+
+        public List<ProposalViewModel> GetPublishes()
+        {
+            var query = from pa in _db.ProposalArticles
+                join current in _db.ProposalCurrentActions on pa.ProposalId equals current.ProposalId
+                where pa.Article.Displayed
+                select current;
+
+            return query.ToProposalViewModels().ToList();
+        }
+
+        public List<ProposalViewModel> GetEnds()
+        {
+            var query = from pa in _db.ProposalArticles
+                join current in _db.ProposalCurrentActions on pa.ProposalId equals current.ProposalId
+                where !pa.Article.Displayed
+                select current;
+
+            return query.ToProposalViewModels().ToList();
+        }
+
+        #endregion
+
+        #region  投稿者向け状態変更
+
+        public ProposalDraft SaveDraft(ProposalDraft draft)
+        {
+            draft.Id = 0;
+            draft = _db.ProposalDrafts.Add(draft);
+            _db.SaveChanges();
+
+            var action = _db.ProposalDraftActions.Add(draft, "draft");
+            _db.SaveChanges();
+
+            _db.ProposalCurrentActions.AddOrUpdate(action);
+            _db.SaveChanges();
+
+            return draft;
+        }
+
+        public void ToDraft(int proposalId)
+        {
+            ChangeStatus(proposalId, "draft");
+        }
+
+        public void Cancel(int proposalId)
+        {
+            var current = _db.ProposalCurrentActions.Find(proposalId);
+            var newStatus = "cancel";
+
+            switch (current.Action.Type)
+            {
+                case "request/publish":
+                    newStatus = "cancel/publish";
+                    break;
+
+                case "request/end":
+                    newStatus = "cancel/end";
+                    break;
+            }
+
+            ChangeStatus(proposalId, newStatus);
+        }
+
+        public void Request(int proposalId)
+        {
+            var current = _db.ProposalCurrentActions.Find(proposalId);
+            var newStatus = "request/publish";
+
+            switch (current.Action.Type)
+            {
+                case "draft":
+                case "cancel/publish":
+                case "reject/publish":
+                    newStatus = "request/publish";
+                    break;
+
+                case "cancel/end":
+                case "reject/end":
+                    newStatus = "request/end";
+                    break;
+            }
+
+            ChangeStatus(proposalId, newStatus);
+        }
+
+        public void RequestPublish(int proposalId)
+        {
+            ChangeStatus(proposalId, "request/publish");
+        }
+
+        public void RequestEnd(int proposalId)
+        {
+            ChangeStatus(proposalId, "request/end");
+        }
+
+        #endregion
+
+        #region 承認者向け状態変更
+
+        public void Reject(int proposalId)
+        {
+            var current = _db.ProposalCurrentActions.Find(proposalId);
+            var newStatus = "reject";
+
+            switch (current.Action.Type)
+            {
+                case "request/publish":
+                    newStatus = "reject/publish";
+                    break;
+
+                case "request/end":
+                    newStatus = "reject/end";
+                    break;
+            }
+
+            ChangeStatus(proposalId, newStatus);
+        }
+
+        public void Approval(int proposalId)
+        {
+            var current = _db.ProposalCurrentActions.Find(proposalId);
+
+            var action = current.Action;
+            switch (action.Type)
+            {
+                case "request/publish":
+                    ChangeStatus(proposalId, "publish");
+                    break;
+
+                case "request/end":
+                    ChangeStatus(proposalId, "end");
+                    break;
+            }
+        }
+
+        #endregion
     }
 }

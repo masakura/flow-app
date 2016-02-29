@@ -111,7 +111,15 @@ namespace FlowApp.Controllers
                         break;
 
                     case "Reject":
-                        _proposalService.ToDraft(draft.Id);
+                        _proposalService.Reject(draft.Id);
+                        break;
+
+                    case "Cancel":
+                        _proposalService.Cancel(draft.Id);
+                        break;
+
+                    case "Request":
+                        _proposalService.Request(draft.Id);
                         break;
 
                     case "Request/Publish":
