@@ -55,12 +55,24 @@ namespace FlowApp.Models
                 .ToList();
         }
 
-        public List<ProposalViewModel> GetShowns()
+        public List<ProposalViewModel> GetPublishes()
         {
-            return _db.ProposalCurrentActions
-                .Type("shown")
-                .ToProposalViewModels()
-                .ToList();
+            var query = from pa in _db.ProposalArticles
+                join current in _db.ProposalCurrentActions on pa.ProposalId equals current.ProposalId
+                where pa.Article.Displayed
+                select current;
+
+            return query.ToProposalViewModels().ToList();
+        }
+
+        public List<ProposalViewModel> GetEnds()
+        {
+            var query = from pa in _db.ProposalArticles
+                        join current in _db.ProposalCurrentActions on pa.ProposalId equals current.ProposalId
+                        where !pa.Article.Displayed
+                        select current;
+
+            return query.ToProposalViewModels().ToList();
         }
 
         public ProposalViewModel GetProposal(int proposalId)

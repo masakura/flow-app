@@ -228,8 +228,9 @@
     <Content Include="Views\Proposals\Index.cshtml" />
     <None Include="Views\Proposals\Drafts.cshtml" />
     <Content Include="Views\Proposals\_Proposals.cshtml" />
-    <None Include="Views\Proposals\Showns.cshtml" />
-    <None Include="Views\Proposals\Waitings.cshtml" />
+    <Content Include="Views\Proposals\Ends.cshtml" />
+    <None Include="Views\Proposals\Publishes.cshtml" />
+    <None Include="Views\Proposals\Pendings.cshtml" />
     <Content Include="Views\Proposals\_ButtonGroup.cshtml" />
     <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceqp40.dll" />

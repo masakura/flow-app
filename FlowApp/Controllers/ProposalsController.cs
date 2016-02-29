@@ -20,14 +20,19 @@ namespace FlowApp.Controllers
             return View(_proposalService.GetDrafts());
         }
 
-        public ActionResult Waitings()
+        public ActionResult Pendings()
         {
             return View(_proposalService.GetPendings());
         }
 
-        public ActionResult Showns()
+        public ActionResult Publishes()
         {
-            return View(_proposalService.GetShowns());
+            return View(_proposalService.GetPublishes());
+        }
+
+        public ActionResult Ends()
+        {
+            return View(_proposalService.GetEnds());
         }
 
         // GET: Proposals/Details/5
