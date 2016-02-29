@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FlowApp.Models
+﻿namespace FlowApp.Models
 {
     public class UserViewModel
     {

@@ -1,0 +1,11 @@
+﻿@model IEnumerable<FlowApp.Models.ProposalViewModel>
+
+<h2>公開終了 (すべて)</h2>
+
+@Html.Partial("_ButtonGroup")
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@Html.Partial("_Proposals", Model)
