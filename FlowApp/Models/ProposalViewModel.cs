@@ -17,6 +17,8 @@ namespace FlowApp.Models
         [UIHint("User")]
         public UserViewModel DraftUser { get; set; }
 
+        public ApprovalStatus ApprovalStatus { get; set; }
+
         public static ProposalViewModel Create(ProposalCurrentAction current)
         {
             return new ProposalViewModel
@@ -24,6 +26,7 @@ namespace FlowApp.Models
                 Id = current.ProposalId,
                 Title = current.Action.Draft.Title,
                 Status = current.Action.Type,
+                ApprovalStatus = current.Action.ApprovalStatus,
                 ProposalUser = UserViewModel.Create(current.Proposal.User),
                 DraftUser = UserViewModel.Create(current.Action.Draft.User)
             };

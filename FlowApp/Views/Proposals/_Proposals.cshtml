@@ -9,6 +9,9 @@
             @Html.DisplayNameFor(model => model.Status)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.ApprovalStatus)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.ProposalUser)
         </th>
         <th>
@@ -25,6 +28,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ApprovalStatus)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ProposalUser)

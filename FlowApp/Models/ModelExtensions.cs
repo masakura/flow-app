@@ -8,13 +8,15 @@ namespace FlowApp.Models
 {
     public static class ModelExtensions
     {
-        public static ProposalDraftAction Add(this IDbSet<ProposalDraftAction> actions, ProposalDraft draft, string type)
+        public static ProposalDraftAction Add(this IDbSet<ProposalDraftAction> actions, ProposalDraft draft, string type,
+            ApprovalStatus approvalStatus = ApprovalStatus.None)
         {
             return actions.Add(new ProposalDraftAction
             {
                 DraftId = draft.Id,
                 Draft = draft,
-                Type = type
+                Type = type,
+                ApprovalStatus = approvalStatus
             });
         }
 
@@ -45,6 +47,14 @@ namespace FlowApp.Models
         {
             return from current in currents
                 join type in types on current.Action.Type equals type
+                select current;
+        }
+
+        public static IQueryable<ProposalCurrentAction> ApprovalStatuses(
+            this IQueryable<ProposalCurrentAction> currents, params ApprovalStatus[] statuses)
+        {
+            return from current in currents
+                join status in statuses on current.Action.ApprovalStatus equals status
                 select current;
         }
 

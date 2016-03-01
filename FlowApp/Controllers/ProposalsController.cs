@@ -20,6 +20,21 @@ namespace FlowApp.Controllers
             return View(_proposalService.GetDrafts());
         }
 
+        public ActionResult Requestings()
+        {
+            return View(_proposalService.GetRequestings());
+        }
+
+        public ActionResult YourPublishes()
+        {
+            return View(_proposalService.GetYourPublishes());
+        }
+
+        public ActionResult YourEnds()
+        {
+            return View(_proposalService.GetYourEnds());
+        }
+
         public ActionResult Pendings()
         {
             return View(_proposalService.GetPendings());
@@ -118,10 +133,6 @@ namespace FlowApp.Controllers
                         _proposalService.Cancel(draft.Id);
                         break;
 
-                    case "Request":
-                        _proposalService.Request(draft.Id);
-                        break;
-
                     case "Request/Publish":
                         _proposalService.RequestPublish(draft.Id);
                         break;
@@ -130,7 +141,7 @@ namespace FlowApp.Controllers
                         _proposalService.RequestEnd(draft.Id);
                         break;
 
-                    case "Approval":
+                    case "Approve":
                         _proposalService.Approval(draft.Id);
                         break;
                 }

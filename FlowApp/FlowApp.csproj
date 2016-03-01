@@ -186,6 +186,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\ApprovalStatus.cs" />
     <Compile Include="Models\Article.cs" />
     <Compile Include="Models\ArticleService.cs" />
     <Compile Include="Models\ProposalArticle.cs" />
@@ -228,7 +229,10 @@
     <Content Include="Views\Proposals\Index.cshtml" />
     <None Include="Views\Proposals\Drafts.cshtml" />
     <Content Include="Views\Proposals\_Proposals.cshtml" />
+    <Content Include="Views\Proposals\YourEnds.cshtml" />
     <Content Include="Views\Proposals\Ends.cshtml" />
+    <Content Include="Views\Proposals\YourPublishes.cshtml" />
+    <Content Include="Views\Proposals\Requestings.cshtml" />
     <None Include="Views\Proposals\Publishes.cshtml" />
     <None Include="Views\Proposals\Pendings.cshtml" />
     <Content Include="Views\Proposals\_ButtonGroup.cshtml" />

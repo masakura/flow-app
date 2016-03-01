@@ -48,21 +48,35 @@ namespace FlowApp.Models
         {
             var prevAction = _db.ProposalCurrentActions.Find(proposalId).Action;
 
-            var action = _db.ProposalDraftActions.Add(prevAction.Draft, status);
+            var action = _db.ProposalDraftActions.Add(prevAction.Draft, status, ApprovalStatus.Requesting);
             _db.SaveChanges();
             action = _db.ProposalDraftActions.Find(action.Id);
 
             _db.ProposalCurrentActions.AddOrUpdate(action);
             _db.SaveChanges();
+        }
 
-            switch (status)
+        private void ChangeApprovalStatus(int proposalId, ApprovalStatus approvalStatus)
+        {
+            var current = _db.ProposalCurrentActions.Find(proposalId);
+
+            var action = current.Action;
+            action.ApprovalStatus = approvalStatus;
+
+            _db.SaveChanges();
+
+            if (approvalStatus == ApprovalStatus.Approved)
             {
-                case "publish":
-                    _articleService.Save(proposalId, true);
-                    break;
-                case "end":
-                    _articleService.Save(proposalId, false);
-                    break;
+                switch (action.Type)
+                {
+                    case "publish":
+                        _articleService.Save(proposalId, true);
+                        break;
+
+                    case "end":
+                        _articleService.Save(proposalId, false);
+                        break;
+                }
             }
         }
 
@@ -77,9 +91,42 @@ namespace FlowApp.Models
         {
             return _db.ProposalCurrentActions
                 .Mine()
-                .Types("draft", "cancel", "reject", "cancel/publish", "cancel/end", "reject/publish", "reject/end")
+                .Where(
+                    c =>
+                        c.Action.Type == "draft" ||
+                        (c.Action.Type == "publish" &&
+                         (c.Action.ApprovalStatus == ApprovalStatus.Canceled ||
+                          c.Action.ApprovalStatus == ApprovalStatus.Rejected)))
                 .ToProposalViewModels()
                 .ToList();
+        }
+
+        public List<ProposalViewModel> GetRequestings()
+        {
+            return _db.ProposalCurrentActions
+                .Mine()
+                .ApprovalStatuses(ApprovalStatus.Requesting)
+                .ToProposalViewModels()
+                .ToList();
+        }
+
+        public List<ProposalViewModel> GetYourPublishes()
+        {
+            var query = from pa in _db.ProposalArticles
+                        join current in _db.ProposalCurrentActions.Mine() on pa.ProposalId equals current.ProposalId
+                        where pa.Article.Displayed
+                        select current;
+            return query.ToProposalViewModels().ToList();
+        }
+
+        public List<ProposalViewModel> GetYourEnds()
+        {
+            var query = from pa in _db.ProposalArticles
+                        join current in _db.ProposalCurrentActions.Mine() on pa.ProposalId equals current.ProposalId
+                        where !pa.Article.Displayed
+                        select current;
+
+            return query.ToProposalViewModels().ToList();
         }
 
         #endregion
@@ -94,7 +141,7 @@ namespace FlowApp.Models
         public List<ProposalViewModel> GetPendings()
         {
             return _db.ProposalCurrentActions
-                .Types("request/publish", "request/end")
+                .ApprovalStatuses(ApprovalStatus.Requesting)
                 .ToProposalViewModels()
                 .ToList();
         }
@@ -145,93 +192,31 @@ namespace FlowApp.Models
 
         public void Cancel(int proposalId)
         {
-            var current = _db.ProposalCurrentActions.Find(proposalId);
-            var newStatus = "cancel";
-
-            switch (current.Action.Type)
-            {
-                case "request/publish":
-                    newStatus = "cancel/publish";
-                    break;
-
-                case "request/end":
-                    newStatus = "cancel/end";
-                    break;
-            }
-
-            ChangeStatus(proposalId, newStatus);
-        }
-
-        public void Request(int proposalId)
-        {
-            var current = _db.ProposalCurrentActions.Find(proposalId);
-            var newStatus = "request/publish";
-
-            switch (current.Action.Type)
-            {
-                case "draft":
-                case "cancel/publish":
-                case "reject/publish":
-                    newStatus = "request/publish";
-                    break;
-
-                case "cancel/end":
-                case "reject/end":
-                    newStatus = "request/end";
-                    break;
-            }
-
-            ChangeStatus(proposalId, newStatus);
+            ChangeApprovalStatus(proposalId, ApprovalStatus.Canceled);
         }
 
         public void RequestPublish(int proposalId)
         {
-            ChangeStatus(proposalId, "request/publish");
+            ChangeStatus(proposalId, "publish");
         }
 
         public void RequestEnd(int proposalId)
         {
-            ChangeStatus(proposalId, "request/end");
+            ChangeStatus(proposalId, "end");
         }
 
         #endregion
 
         #region 承認者向け状態変更
 
-        public void Reject(int proposalId)
-        {
-            var current = _db.ProposalCurrentActions.Find(proposalId);
-            var newStatus = "reject";
-
-            switch (current.Action.Type)
-            {
-                case "request/publish":
-                    newStatus = "reject/publish";
-                    break;
-
-                case "request/end":
-                    newStatus = "reject/end";
-                    break;
-            }
-
-            ChangeStatus(proposalId, newStatus);
-        }
-
         public void Approval(int proposalId)
         {
-            var current = _db.ProposalCurrentActions.Find(proposalId);
+            ChangeApprovalStatus(proposalId, ApprovalStatus.Approved);
+        }
 
-            var action = current.Action;
-            switch (action.Type)
-            {
-                case "request/publish":
-                    ChangeStatus(proposalId, "publish");
-                    break;
-
-                case "request/end":
-                    ChangeStatus(proposalId, "end");
-                    break;
-            }
+        public void Reject(int proposalId)
+        {
+            ChangeApprovalStatus(proposalId, ApprovalStatus.Rejected);
         }
 
         #endregion
